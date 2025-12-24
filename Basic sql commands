@@ -1,0 +1,114 @@
+SQL Fundamentals: DVD Rental Database Journey
+This repository contains my SQL learning progress. It covers basic data retrieval, filtering, ordering, and pattern matching.
+
+1. Basic Selection & Counting
+Theory: * SELECT *: Retrieves all columns from a table.
+
+SELECT COUNT(*): Returns the number of rows that match the criteria.
+
+DISTINCT: Removes duplicate values from the output.
+
+Questions Solved:
+
+What does the customer table look like?
+
+SQL
+
+SELECT * FROM customer;
+How many total customers are in the database?
+
+SQL
+
+SELECT COUNT(*) FROM customer;
+How many unique price points (amounts) have been charged?
+
+SQL
+
+SELECT COUNT(DISTINCT amount) FROM payment;
+2. Filtering with WHERE & Logic
+Theory: The WHERE clause filters records. It uses operators like =, !=, >, <, and logical operators like AND, OR, and NOT.
+
+Questions Solved:
+
+Find the email for Nancy Thomas.
+
+SQL
+
+SELECT email FROM customer WHERE first_name = 'Nancy' AND last_name = 'Thomas';
+Find high-value films (rental rate > $4 and replacement cost ≥ $19.99) that are NOT rated R.
+
+SQL
+
+SELECT title, rating FROM film 
+WHERE rental_rate > 4 
+AND replacement_cost >= 19.99 
+AND rating != 'R';
+3. Sorting and Limiting Results
+Theory: * ORDER BY: Sorts the result set in ASC (default) or DESC order.
+
+LIMIT: Restricts the number of rows returned. Useful for "Top 10" style queries.
+
+Questions Solved:
+
+Who were the 10 most recent customers to make a payment?
+
+SQL
+
+SELECT customer_id FROM payment ORDER BY payment_date DESC LIMIT 10;
+What are the 5 shortest films in the library?
+
+SQL
+
+SELECT title, length FROM film ORDER BY length ASC LIMIT 5;
+4. Range and List Filtering (BETWEEN, IN)
+Theory: * BETWEEN: Filters values within a range (inclusive of boundary values). Works for numbers and dates.
+
+IN: Checks if a value matches any value in a list of options.
+
+Questions Solved:
+
+How many payments were made between $8.00 and $9.00?
+
+SQL
+
+SELECT COUNT(*) FROM payment WHERE amount BETWEEN 8 AND 9;
+Find all payments made in the first half of February 2007.
+
+SQL
+
+SELECT * FROM payment WHERE payment_date BETWEEN '2007-02-01' AND '2007-02-15';
+Find payments for specific amounts: $0.99, $1.98, or $1.99.
+
+SQL
+
+SELECT * FROM payment WHERE amount IN (0.99, 1.98, 1.99);
+5. Pattern Matching (LIKE & ILIKE)
+Theory: * LIKE: Case-sensitive pattern matching.
+
+ILIKE: Case-insensitive pattern matching (PostgreSQL specific).
+
+%: Matches any sequence of characters.
+
+_: Matches any single character.
+
+Questions Solved:
+
+Find customers with 'er' anywhere in their first name.
+
+SQL
+
+SELECT * FROM customer WHERE first_name LIKE '%er%';
+Find customers whose first name has 'her' starting at the second character (e.g., Cheryl, Theresa).
+
+SQL
+
+SELECT * FROM customer WHERE first_name LIKE '_her%';
+Find all films with 'Truman' in the title, regardless of case.
+
+SQL
+
+SELECT * FROM film WHERE title ILIKE '%Truman%';
+Key Learning Takeaway
+When combining multiple filters, the order of operations matters. Using COUNT(DISTINCT column) is a powerful way to understand the variety within a dataset, such as the number of unique districts or film ratings.
+
+Would you like me to create a "Cheat Sheet" table summarizing these operators for your GitHub README as well?
