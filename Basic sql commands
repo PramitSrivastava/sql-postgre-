@@ -111,4 +111,39 @@ SELECT * FROM film WHERE title ILIKE '%Truman%';
 Key Learning Takeaway
 When combining multiple filters, the order of operations matters. Using COUNT(DISTINCT column) is a powerful way to understand the variety within a dataset, such as the number of unique districts or film ratings.
 
-Would you like me to create a "Cheat Sheet" table summarizing these operators for your GitHub README as well?
+📖 Deep Dive: Theory & Applied Questions
+1. Data Exploration & Discovery
+Theory: Before analyzing, you must understand the schema. Using SELECT * combined with LIMIT allows you to peek at the data without crashing the system with millions of rows.
+
+Questions Solved:
+
+"What information is stored in the payment table?" SELECT * FROM payment LIMIT 10;
+
+"How many different film ratings (G, PG, R, etc.) exist in our inventory?" SELECT DISTINCT rating FROM film;
+
+2. Advanced Filtering with Strings
+Theory: LIKE is case-sensitive, while ILIKE is a PostgreSQL-specific command that ignores case. The wildcard % represents any number of characters, and _ represents exactly one.
+
+Questions Solved:
+
+"How many actors have a first name starting with 'P'?" SELECT COUNT(*) FROM actor WHERE first_name LIKE 'P%';
+
+"Find customers where the name has 'her' but not as the first character." SELECT * FROM customer WHERE first_name LIKE '_her%';
+
+3. Numerical & Date Ranges
+Theory: The BETWEEN operator is "inclusive," meaning BETWEEN 8 AND 9 includes exactly 8.00 and 9.00. For dates, it is best to use strings in 'YYYY-MM-DD' format.
+
+Questions Solved:
+
+"Identify transactions that occurred in the first two weeks of February 2007." SELECT * FROM payment WHERE payment_date BETWEEN '2007-02-01' AND '2007-02-14';
+
+"How many films have a replacement cost between $5 and $15 and are rated R?" SELECT COUNT(*) FROM film WHERE replacement_cost BETWEEN 5 AND 15 AND rating = 'R';
+
+4. Sorting & Top-Tier Results
+Theory: ORDER BY defaults to ASC (Ascending). When you need to find "The Most" or "The Least" of something, you combine ORDER BY with LIMIT.
+
+Questions Solved:
+
+"Which 5 films are the shortest in the entire library?" SELECT title, length FROM film ORDER BY length ASC LIMIT 5;
+
+"Find the 10 most expensive payments ever made." SELECT * FROM payment ORDER BY amount DESC LIMIT 10;
