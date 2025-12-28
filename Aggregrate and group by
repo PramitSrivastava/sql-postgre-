@@ -1,0 +1,156 @@
+SQL Aggregations & Grouping — Theory Notes
+
+These notes cover GROUP BY, aggregate functions, ORDER BY on aggregates, DATE extraction, and LIMIT, based on hands-on practice.
+
+1️⃣ Aggregate Functions (The “Math” of SQL)
+
+Aggregate functions perform calculations on multiple rows and return one value per group.
+
+Common Aggregates
+Function	Meaning
+COUNT()	Number of rows
+SUM()	Total value
+AVG()	Average value
+ROUND()	Rounds numeric output
+Example
+SELECT COUNT(payment_id) FROM payment;
+
+
+➡️ Total number of payments.
+
+2️⃣ GROUP BY — Turning Rows into Insights
+
+GROUP BY groups rows that have the same value and applies aggregates per group.
+
+Rule (VERY IMPORTANT)
+
+Every column in SELECT must either be aggregated or appear in GROUP BY
+
+Example
+SELECT staff_id, COUNT(payment_id)
+FROM payment
+GROUP BY staff_id;
+
+
+➡️ One row per staff member showing how many payments they handled.
+
+3️⃣ GROUP BY with Multiple Columns
+
+You can group on combinations of columns.
+
+Example
+SELECT customer_id, staff_id, SUM(amount)
+FROM payment
+GROUP BY customer_id, staff_id;
+
+
+➡️ Total amount paid per customer per staff member.
+
+🧠 Mental model:
+
+Each unique (customer_id, staff_id) pair becomes one row.
+
+4️⃣ ORDER BY with Aggregates
+
+You can sort results using aggregate values.
+
+Example
+SELECT customer_id, SUM(amount)
+FROM payment
+GROUP BY customer_id
+ORDER BY SUM(amount) DESC;
+
+
+➡️ Customers ranked by total spending.
+
+📌 Tip:
+
+You can also use column position or alias, but writing SUM(amount) is clearest.
+
+5️⃣ LIMIT — Top N Analysis
+
+Used to restrict result size after sorting.
+
+Example
+SELECT customer_id, SUM(amount)
+FROM payment
+GROUP BY customer_id
+ORDER BY SUM(amount) DESC
+LIMIT 5;
+
+
+➡️ Top 5 highest-paying customers.
+
+This pattern is extremely common in analytics and interviews.
+
+6️⃣ GROUP BY with Dates (Time-Based Analysis)
+
+Dates are often grouped by day, month, or year.
+
+Extract date from timestamp
+SELECT DATE(payment_date) FROM payment;
+
+Daily aggregates
+SELECT DATE(payment_date), SUM(amount)
+FROM payment
+GROUP BY DATE(payment_date);
+
+
+➡️ Total revenue per day.
+
+7️⃣ COUNT vs COUNT(column)
+
+Important distinction:
+
+Query	Meaning
+COUNT(*)	Counts all rows
+COUNT(amount)	Counts non-NULL amounts
+
+In your dataset, amount is NOT NULL, so both behave similarly — but this matters in real data.
+
+8️⃣ AVG and ROUND for Clean Results
+
+Averages often produce long decimals.
+
+Example
+SELECT rating, ROUND(AVG(replacement_cost), 2)
+FROM film
+GROUP BY rating;
+
+
+➡️ Average replacement cost per rating, rounded to 2 decimals.
+
+📌 Rule:
+
+ROUND() is applied after aggregation.
+
+9️⃣ ORDER BY Multiple Aggregates
+
+You can sort by more than one metric.
+
+Example
+SELECT DATE(payment_date), COUNT(amount), SUM(amount)
+FROM payment
+GROUP BY DATE(payment_date)
+ORDER BY COUNT(amount), SUM(amount);
+
+
+➡️ Days sorted by number of transactions, then revenue.
+
+🔁 Core Patterns You Learned Today
+
+These are real Data Engineering / Analytics patterns:
+
+🟢 Top N customers by spend
+
+🟢 Staff performance analysis
+
+🟢 Daily revenue aggregation
+
+🟢 Category-based averages
+
+🟢 Multi-dimensional grouping
+
+🧠 One-Line Summary
+
+GROUP BY answers “per what?” — and aggregates answer “how much / how many?”
