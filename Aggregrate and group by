@@ -154,3 +154,44 @@ These are real Data Engineering / Analytics patterns:
 🧠 One-Line Summary
 
 GROUP BY answers “per what?” — and aggregates answer “how much / how many?”
+
+-- Which day had the most number of payments?
+
+-- SELECT DATE(payment_date) , COUNT(payment_id)
+-- FROM payment
+-- GROUP BY DATE(payment_date)
+-- ORDER BY COUNT(payment_id) DESC
+-- LIMIT 1;
+
+
+-- Which customer made the highest total payment?
+
+-- SELECT customer_id , SUM(amount) 
+-- FROM payment
+-- GROUP BY customer_id 
+-- ORDER BY SUM(amount) DESC
+-- LIMIT 1;
+
+-- Which staff member handled the most transactions?
+
+-- SELECT staff_id , COUNT(amount) 
+-- FROM payment
+-- GROUP BY staff_id 
+-- ORDER BY COUNT(amount)  DESC
+-- LIMIT 1;
+
+
+-- Which rating category is most expensive on average?
+
+-- SELECT rating , ROUND(AVG(rental_rate) , 2)
+-- FROM film
+-- GROUP BY rating 
+-- ORDER BY AVG(rental_rate) DESC
+-- LIMIT 1;
+
+-- Are there days where many payments happened but revenue was low?
+
+-- SELECT DATE(payment_date)  , COUNT(*) , SUM(amount)
+-- FROM payment
+-- GROUP BY DATE(payment_date)
+-- ORDER BY COUNT(*) DESC , SUM(amount) ASC;
