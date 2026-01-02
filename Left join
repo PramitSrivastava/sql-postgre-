@@ -108,6 +108,24 @@ LEFT JOIN payment ON staff.staff_id = payment.staff_id
 GROUP BY store.store_id
 ORDER BY store.store_id;
 ```
+### 11
+-- Show all customers and their total payment amount.
+-- Include customers who never made a payment.
+-- Only show customers whose total payment is greater than 100.
+
+-- Tables:
+
+-- customer
+
+-- payment
+
+SELECT customer.customer_id , customer.first_name , customer.last_name , COALESCE(SUM(payment.amount),0) AS total_amount
+FROM customer
+LEFT JOIN payment
+ON customer.customer_id = payment.customer_id
+GROUP BY customer.customer_id , customer.first_name , customer.last_name 
+HAVING COALESCE(SUM(payment.amount),0) > 100
+ORDER BY total_amount DESC
 
 ## 🔍 JOIN TYPES CHEAT SHEET (for Future Reference)
 
