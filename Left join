@@ -1,0 +1,125 @@
+## Complete Sakila Query Solutions (with JOIN Notes)
+
+Here are all your queries formatted as **Question first, then corrected SQL query**.
+
+### 4️⃣ Stores and customers
+**Show all stores and the customers belonging to them. Include stores that have zero customers. Tables: store, customer**
+
+```sql
+SELECT 
+    store.store_id,
+    customer.customer_id,
+    CONCAT(customer.first_name, ' ', customer.last_name) AS customer_name
+FROM store
+LEFT JOIN customer ON store.store_id = customer.store_id
+ORDER BY store.store_id, customer.customer_id;
+```
+
+***
+
+### 5️⃣ Categories and films
+**Show all film categories and the films in them. Include categories that currently have no films. Tables: category, film_category, film**
+
+```sql
+SELECT 
+    category.name AS category_name,
+    film.title
+FROM category
+LEFT JOIN film_category ON category.category_id = film_category.category_id
+LEFT JOIN film ON film_category.film_id = film.film_id
+ORDER BY category.name, film.title;
+```
+
+***
+
+### 6️⃣ Customers with total payments
+**Show: customer_id, customer name, total amount paid. Include customers who never paid anything (show 0). Tables: customer, payment**
+
+```sql
+SELECT 
+    customer.customer_id,
+    CONCAT(customer.first_name, ' ', customer.last_name) AS customer_name,
+    COALESCE(SUM(payment.amount), 0) AS total_amount_paid
+FROM customer
+LEFT JOIN payment ON customer.customer_id = payment.customer_id
+GROUP BY customer.customer_id, customer.first_name, customer.last_name
+ORDER BY total_amount_paid ASC;
+```
+
+***
+
+### 7️⃣ Films and number of rentals
+**Show: film title, total number of rentals. Include films that were never rented. Tables: film, inventory, rental**
+
+```sql
+SELECT 
+    film.title,
+    COALESCE(COUNT(rental.rental_id), 0) AS total_rentals
+FROM film
+LEFT JOIN inventory ON film.film_id = inventory.film_id
+LEFT JOIN rental ON inventory.inventory_id = rental.inventory_id
+GROUP BY film.film_id, film.title
+ORDER BY total_rentals DESC;
+```
+
+***
+
+### 8️⃣ Staff workload
+**Show: staff_id, staff name, number of payments handled. Include staff members with zero payments. Tables: staff, payment**
+
+```sql
+SELECT 
+    staff.staff_id,
+    CONCAT(staff.first_name, ' ', staff.last_name) AS staff_name,
+    COALESCE(COUNT(payment.payment_id), 0) AS payments_handled
+FROM staff
+LEFT JOIN payment ON staff.staff_id = payment.staff_id
+GROUP BY staff.staff_id, staff.first_name, staff.last_name
+ORDER BY payments_handled DESC;
+```
+
+***
+
+### 9️⃣ Customers and last payment date
+**Show: customer name, last payment date. Include customers who never made a payment. Tables: customer, payment**
+
+```sql
+SELECT 
+    CONCAT(customer.first_name, ' ', customer.last_name) AS customer_name,
+    MAX(payment.payment_date) AS last_payment_date
+FROM customer
+LEFT JOIN payment ON customer.customer_id = payment.customer_id
+GROUP BY customer.customer_id, customer.first_name, customer.last_name
+ORDER BY customer.customer_id ASC;
+```
+
+***
+
+### 🔟 Stores and total revenue
+**Show: store_id, total revenue generated. Include stores that generated no revenue. Tables: store, staff, payment**
+
+```sql
+SELECT 
+    store.store_id,
+    COALESCE(SUM(payment.amount), 0) AS total_revenue
+FROM store
+LEFT JOIN staff ON store.store_id = staff.store_id
+LEFT JOIN payment ON staff.staff_id = payment.staff_id
+GROUP BY store.store_id
+ORDER BY store.store_id;
+```
+
+## 🔍 JOIN TYPES CHEAT SHEET (for Future Reference)
+
+| Join Type | When to Use | Result |
+|-----------|-------------|--------|
+| **INNER JOIN** | Both tables have matching records | Only matching rows from BOTH tables |
+| **LEFT JOIN** | Want ALL records from LEFT table | Left table + matching right OR NULL |
+| **RIGHT JOIN** | Want ALL records from RIGHT table | Right table + matching left OR NULL |
+| **FULL OUTER JOIN** | Want ALL records from BOTH tables | All rows + NULLs where no match |
+
+**Quick Rule:** "Include items with zero/no matches" → **LEFT JOIN** from the main table.
+
+**All queries above use LEFT JOIN + COALESCE because requirements say "Include [items] that have zero/no [matches]"!**
+
+Ready to test any specific query?
