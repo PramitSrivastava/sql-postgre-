@@ -1,0 +1,170 @@
+📘 SQL Subqueries — Theory & Usage Guide
+🔹 What is a Subquery?
+
+A subquery is a SQL query written inside another query.
+It is used when the result of one query is required to filter, compare, or check conditions in another query.
+
+SELECT *
+FROM table
+WHERE column IN (SELECT column FROM other_table);
+
+🔹 Why Subqueries Are Used
+
+Subqueries are useful when:
+
+A condition depends on data from another table
+
+You need to filter rows dynamically
+
+You want to check existence, not fetch data
+
+Aggregated values (AVG, COUNT, MAX) are needed for comparison
+
+🔹 Types of Subqueries (Based on What I Practiced)
+1️⃣ Subquery in WHERE Clause (Most Common)
+
+Used to filter rows in the outer query.
+
+🔸 IN Subquery
+
+Returns a list of values.
+
+SELECT film_id, title
+FROM film
+WHERE film_id IN (
+    SELECT inventory.film_id
+    FROM rental
+    JOIN inventory
+      ON rental.inventory_id = inventory.inventory_id
+    WHERE return_date BETWEEN '2005-05-29' AND '2005-05-30'
+);
+
+✅ When to use
+
+When subquery returns multiple rows
+
+When checking if a value exists in a set/list
+
+❌ When NOT to use
+
+On very large datasets (can be slower than EXISTS)
+
+2️⃣ EXISTS Subquery (Existence Check)
+
+Checks whether at least one row exists.
+
+SELECT first_name, last_name
+FROM customer c
+WHERE EXISTS (
+    SELECT 1
+    FROM payment p
+    WHERE p.customer_id = c.customer_id
+      AND p.amount > 11
+);
+
+🔑 Key Concept: Correlation
+p.customer_id = c.customer_id
+
+
+This connects the subquery to the current row of the outer query.
+
+✅ When to use
+
+When you only care about existence
+
+For correlated conditions
+
+On large tables (more efficient)
+
+❌ Common mistake
+
+Re-joining the outer table inside EXISTS (unnecessary).
+
+3️⃣ Correlated vs Non-Correlated Subqueries
+🔸 Non-Correlated Subquery
+
+Runs once, independent of the outer query.
+
+SELECT *
+FROM payment
+WHERE amount > (
+    SELECT AVG(amount)
+    FROM payment
+);
+
+🔸 Correlated Subquery
+
+Runs once per row of the outer query.
+
+SELECT *
+FROM customer c
+WHERE EXISTS (
+    SELECT 1
+    FROM payment p
+    WHERE p.customer_id = c.customer_id
+);
+
+🧠 Rule
+
+If the subquery references the outer table, it is correlated.
+
+4️⃣ JOIN vs Subquery (Important Understanding)
+Requirement	Use
+Need columns from another table	JOIN
+Only checking existence	EXISTS
+Filtering using a list	IN
+Row-by-row condition	Correlated Subquery
+❗ Important
+
+EXISTS is NOT a JOIN
+It is a boolean check.
+
+5️⃣ Subquery with JOIN Inside (Valid but Conditional)
+
+JOINs inside subqueries are valid only when needed.
+
+WHERE EXISTS (
+    SELECT 1
+    FROM payment p
+    JOIN staff s
+      ON p.staff_id = s.staff_id
+    WHERE p.customer_id = c.customer_id
+      AND s.store_id = 1
+);
+
+✅ When to use
+
+When filtering requires additional tables
+
+❌ When NOT to use
+
+Do NOT join the outer query table again
+
+🔹 What I Have Learned So Far (Summary)
+
+✔ Subqueries in WHERE
+✔ IN vs EXISTS
+✔ Correlated subqueries
+✔ Why correlation condition is mandatory
+✔ JOIN vs EXISTS logic
+✔ Debugging wrong subquery patterns
+✔ Using real schema (DVD Rental DB)
+
+🔹 Mental Cheat Sheet (Revision)
+
+IN → list comparison
+
+EXISTS → existence check
+
+JOIN → need columns
+
+Correlation → per-row logic
+
+No correlation → subquery runs once
+
+🏁 Status Check
+
+📊 Subquery mastery level: ~75%
+🧠 Conceptual understanding: Strong
+
+This theory section is GitHub-ready and perfect for revision before interviews or coding rounds.
