@@ -107,4 +107,33 @@ Subquery in SELECT clause
 
 Correlated subquery
 
-One value returned per outer row
+One value returned per outer 
+
+
+
+-- 6️⃣ Subquery in FROM Clause (Derived Table)
+-- Find customers whose average payment amount is greater than 5.
+
+FIRST WAY 
+
+-- SELECT c.first_name, c.last_name
+-- FROM customer c
+-- JOIN (
+--     SELECT customer_id, AVG(amount) AS avg_amount
+--     FROM payment
+--     GROUP BY customer_id
+-- ) p
+--   ON c.customer_id = p.customer_id
+-- WHERE p.avg_amount > 5;
+
+
+SECOND WAY 
+
+SELECT c.first_name, c.last_name
+FROM customer AS c
+WHERE (
+    SELECT AVG(p.amount)
+    FROM payment AS p
+    WHERE c.customer_id = p.customer_id
+) > 5;
+
