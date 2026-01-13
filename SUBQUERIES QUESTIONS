@@ -1,0 +1,110 @@
+1️⃣ IN Subquery
+❓ Question
+
+Find the film_id and title of films that were rented on 2005-05-29.
+
+✅ Answer
+SELECT DISTINCT f.film_id, f.title
+FROM film f
+JOIN inventory i
+  ON f.film_id = i.film_id
+WHERE i.inventory_id IN (
+    SELECT r.inventory_id
+    FROM rental r
+    WHERE DATE(r.rental_date) = '2005-05-29'
+)
+ORDER BY f.film_id;
+
+🔎 Concept Used
+
+Subquery in WHERE
+
+IN for list comparison
+
+Handling TIMESTAMP vs DATE
+
+2️⃣ Simple EXISTS
+❓ Question
+
+List customers who have made at least one payment.
+
+✅ Answer
+SELECT c.first_name, c.last_name
+FROM customer c
+WHERE EXISTS (
+    SELECT 1
+    FROM payment p
+    WHERE p.customer_id = c.customer_id
+);
+
+🔎 Concept Used
+
+EXISTS for existence check
+
+Correlation using customer_id
+
+3️⃣ Correlated EXISTS
+❓ Question
+
+Find customers who have made a payment greater than 10.
+
+✅ Answer
+SELECT c.first_name, c.last_name
+FROM customer c
+WHERE EXISTS (
+    SELECT 1
+    FROM payment p
+    WHERE p.customer_id = c.customer_id
+      AND p.amount > 10
+);
+
+🔎 Concept Used
+
+Correlated subquery
+
+Conditional existence check
+
+4️⃣ Subquery with Aggregate (Non-Correlated)
+❓ Question
+
+Find all payments that are greater than the average payment amount.
+
+✅ Answer
+SELECT *
+FROM payment
+WHERE amount > (
+    SELECT AVG(amount)
+    FROM payment
+);
+
+🔎 Concept Used
+
+Aggregate function inside subquery
+
+Non-correlated subquery
+
+Scalar comparison
+
+5️⃣ Subquery in SELECT Clause
+❓ Question
+
+Show each customer’s first name, last name, and total number of payments made.
+
+✅ Answer
+SELECT
+    c.first_name,
+    c.last_name,
+    (
+        SELECT COUNT(*)
+        FROM payment p
+        WHERE p.customer_id = c.customer_id
+    ) AS total_payments
+FROM customer c;
+
+🔎 Concept Used
+
+Subquery in SELECT clause
+
+Correlated subquery
+
+One value returned per outer row
